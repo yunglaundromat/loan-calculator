@@ -5,6 +5,12 @@ import './App.css';
 
 class App extends Component {
 
+  state = {
+    amount: '',
+    term: '',
+    rаte: ''
+  }
+
   componentDidMount() {
     console.log("App rendered!")
   }
@@ -39,7 +45,7 @@ class App extends Component {
                    </Segment>
                  </Form>
                </Grid.Column>
-               <Grid.Column>
+               <Grid.Column stretched>
                  <Statistic>
                    <Statistic.Value>$555</Statistic.Value>
                    <Statistic.Label>Per Month</Statistic.Label>
