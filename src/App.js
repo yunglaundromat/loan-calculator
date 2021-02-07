@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Form, Grid, Header, Image, Segment, Container, Statistic, Divider, Message } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Image, Segment, Container, Statistic, Divider } from 'semantic-ui-react'
 import './App.css';
 
 class App extends Component {
@@ -9,7 +9,10 @@ class App extends Component {
     term: 0,
     rаte: 0,
     amountFormError: false,
-    rateFormError: false
+    rateFormError: false,
+    termFormError: false,
+    termYearFormDisabled: false,
+    termMonthFormDisabled: false
   }
 
   onCalculateClick() {
@@ -28,25 +31,34 @@ class App extends Component {
       }
     } else if (e.target.name === 'rate') {
       let rate;
-      rate = parseInt(e.target.rate)
+      rate = parseInt(e.target.value)
       this.setState({rate: rate})
-      if (rate > 100 || rate < 0.1) {
-        this.setState({amountFormError: true})
+      if (rate > 0.1 && rate < 100) {
+        this.setState({rateFormError: false})
+      } else {
+        this.setState({rateFormError: true})
       }
     } else if (e.target.name === 'year') {
       let term;
-      term = e.target.value * 12
-      this.setState({term: term}, () => console.log(this.state.term))
+      term = parseInt(e.target.value * 12)
+      this.setState({term: term, termMonthFormDisabled: true})
     } else if (e.target.name === 'months') {
-      this.setState({term: e.target.value}, () => console.log(this.state.term))
+      let term;
+      term = parseInt(e.target.value)
+      this.setState({term: term, termYearFormDisabled: true})
     }
   }
 
-  toggleAmountFormError() {
-
+  onTermFormClick = (e, value) => {
+    if (e.target.name === 'year') {
+      this.setState({termMonthFormDisabled: true, termYearFormDisabled: false})
+    } else if (e.target.name === 'months') {
+      this.setState({termYearFormDisabled: true, termMonthFormDisabled: false})
+    }
   }
 
   render() {
+
     return(
       <Container style={{ marginTop: '6em' }}>
         <Header as='h1' icon inverted textAlign='center'>
@@ -60,8 +72,9 @@ class App extends Component {
            <Segment inverted>
              <Grid columns={2} stackable centered>
                <Grid.Column>
-                 <Form size='large'>
+                 <Form size='large' error>
                    <Segment stacked>
+                     {this.state.amountFormError ?
                      <Form.Input
                       name='amount'
                       label='Loan amount'
@@ -69,13 +82,30 @@ class App extends Component {
                       iconPosition='left'
                       type='number'
                       onChange={(e, target) => this.onFormChange(e, target)}
+                      error='Please enter a valid loan amount (between $1,000 and $1,000,000)'
+                      fluid
                      />
-                     {this.state.amountFormError === true ?
-                     <Message
-                        error
-                        header='Action Forbidden'
-                        content='You can only sign up for an account once with a given e-mail address.'
-                     /> : null}
+                     :
+                     <Form.Input
+                       name='amount'
+                       label='Loan amount'
+                       icon='dollar sign'
+                       iconPosition='left'
+                       type='number'
+                       onChange={(e, target) => this.onFormChange(e, target)}
+                     />}
+                     {this.state.rateFormError ?
+                     <Form.Input
+                       name='rate'
+                       label='Interest rate per year'
+                       icon='percent'
+                       iconPosition='right'
+                       type='number'
+                       onChange={(e, target) => this.onFormChange(e, target)}
+                       error='Please enter a valid interest rate (less than 100%)'
+                       fluid
+                     />
+                     :
                      <Form.Input
                        name='rate'
                        label='Interest rate per year'
@@ -84,18 +114,53 @@ class App extends Component {
                        type='number'
                        onChange={(e, target) => this.onFormChange(e, target)}
                      />
-                     <Form.Input
-                       name='year'
-                       label='Loan term (years)'
-                       type='number'
-                       onChange={(e, target) => this.onFormChange(e, target)}
-                     />
-                     <Form.Input
-                       name='months'
-                       label='Loan term (months)'
-                       type='number'
-                       onChange={(e, target) => this.onFormChange(e, target)}
-                     />
+                     }
+                     <Segment>
+                       <Grid columns={2} relaxed='very'>
+                         <Grid.Column>
+                           {this.state.termYearFormDisabled ?
+                           <Form.Input
+                             name='year'
+                             label='Loan term (years)'
+                             type='number'
+                             onChange={(e, target) => this.onFormChange(e, target)}
+                             onClick={(e, target) => this.onTermFormClick(e, target)}
+                             disabled
+                           />
+                           :
+                           <Form.Input
+                             name='year'
+                             label='Loan term (years)'
+                             type='number'
+                             onChange={(e, target) => this.onFormChange(e, target)}
+                             onClick={(e, target) => this.onTermFormClick(e, target)}
+                           />
+                           }
+                         </Grid.Column>
+                         <Grid.Column>
+                           {this.state.termMonthFormDisabled ?
+                           <Form.Input
+                             name='months'
+                             label='Loan term (months)'
+                             type='number'
+                             onChange={(e, target) => this.onFormChange(e, target)}
+                             onClick={(e, target) => this.onTermFormClick(e, target)}
+                             disabled
+                           />
+                           :
+                           <Form.Input
+                             name='months'
+                             label='Loan term (months)'
+                             type='number'
+                             onChange={(e, target) => this.onFormChange(e, target)}
+                             onClick={(e, target) => this.onTermFormClick(e, target)}
+                           />
+                           }
+
+                         </Grid.Column>
+                       </Grid>
+                       <Divider vertical>Or</Divider>
+                     </Segment>
                      <Button color='teal' fluid size='large' onClick={this.onCalculateClick}>
                        Calculate
                      </Button>
