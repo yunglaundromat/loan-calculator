@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import React, { Component } from 'react'
-import { Button, Form, Grid, Header, Image, Message, Segment, Icon, Container, Statistic } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Image, Segment, Container, Statistic, Divider } from 'semantic-ui-react'
 import './App.css';
 
 class App extends Component {
@@ -11,8 +10,23 @@ class App extends Component {
     rаte: ''
   }
 
-  componentDidMount() {
-    console.log("App rendered!")
+  onCalculateClick() {
+    console.log("function hit!")
+  }
+
+  onFormChange = (e, value) => {
+    if (e.target.name === 'amount') {
+      this.setState({amount: e.target.value}, () => console.log(this.state.amount))
+    } else if (e.target.name === 'rate') {
+      this.setState({rate: e.target.value}, () => console.log(this.state.rate))
+    } else if (e.target.name === 'year') {
+      let term;
+      term = e.target.value * 12
+      this.setState({term: term}, () => console.log(this.state.term))
+    } else if (e.target.name === 'months') {
+      this.setState({term: e.target.value}, () => console.log(this.state.term))
+    }
+
   }
 
   render() {
@@ -26,30 +40,61 @@ class App extends Component {
            <Header as='h2' color='teal' textAlign='center'>
               Let's calculate your loan payments!
            </Header>
-           <Segment>
-             <Grid columns={2} stackable centered="true">
+           <Segment inverted>
+             <Grid columns={2} stackable centered>
                <Grid.Column>
                  <Form size='large'>
                    <Segment stacked>
-                     <Form.Input fluid icon='user' iconPosition='left' placeholder='E-mail address' />
                      <Form.Input
-                       fluid
-                       icon='lock'
-                       iconPosition='left'
-                       placeholder='Password'
-                       type='password'
+                      name='amount'
+                      label='Loan amount'
+                      icon='dollar sign'
+                      iconPosition='left'
+                      type='number'
+                      onChange={(e, target) => this.onFormChange(e, target)}
                      />
-                     <Button color='teal' fluid size='large'>
+                     <Form.Input
+                       name='rate'
+                       label='Interest rate per year'
+                       icon='percent'
+                       iconPosition='right'
+                       type='number'
+                       onChange={(e, target) => this.onFormChange(e, target)}
+                     />
+                     <Form.Input
+                       name='year'
+                       label='Loan term (years)'
+                       type='number'
+                       onChange={(e, target) => this.onFormChange(e, target)}
+                     />
+                     <Form.Input
+                       name='months'
+                       label='Loan term (months)'
+                       type='number'
+                       onChange={(e, target) => this.onFormChange(e, target)}
+                     />
+                     <Button color='teal' fluid size='large' onClick={this.onCalculateClick}>
                        Calculate
                      </Button>
                    </Segment>
                  </Form>
                </Grid.Column>
-               <Grid.Column stretched>
-                 <Statistic>
-                   <Statistic.Value>$555</Statistic.Value>
-                   <Statistic.Label>Per Month</Statistic.Label>
-                 </Statistic>
+               <Grid.Column stretched verticalAlign='middle'>
+                 <Statistic.Group horizontal inverted>
+                   <Statistic>
+                     <Statistic.Value>$6000</Statistic.Value>
+                     <Statistic.Label>Principal Paid</Statistic.Label>
+                   </Statistic>
+                   <Statistic>
+                     <Statistic.Value>$1000</Statistic.Value>
+                     <Statistic.Label>Interest Paid</Statistic.Label>
+                   </Statistic>
+                  </Statistic.Group>
+                  <Divider inverted/>
+                  <Statistic inverted>
+                    <Statistic.Value>$100</Statistic.Value>
+                    <Statistic.Label>Per Month</Statistic.Label>
+                  </Statistic>
                </Grid.Column>
              </Grid>
            </Segment>
