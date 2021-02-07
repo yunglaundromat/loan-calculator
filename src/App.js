@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
-import { Button, Form, Grid, Header, Image, Segment, Container, Statistic, Divider } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Image, Segment, Container, Statistic, Divider, Message } from 'semantic-ui-react'
 import './App.css';
 
 class App extends Component {
 
   state = {
-    amount: '',
-    term: '',
-    rаte: ''
+    amount: 0,
+    term: 0,
+    rаte: 0,
+    amountFormError: false,
+    rateFormError: false
   }
 
   onCalculateClick() {
@@ -16,9 +18,21 @@ class App extends Component {
 
   onFormChange = (e, value) => {
     if (e.target.name === 'amount') {
-      this.setState({amount: e.target.value}, () => console.log(this.state.amount))
+      let amount;
+      amount = parseInt(e.target.value)
+      this.setState({amount: amount})
+      if (amount >= 1000 && amount <= 1000000) {
+        this.setState({amountFormError: false})
+      } else {
+        this.setState({amountFormError: true})
+      }
     } else if (e.target.name === 'rate') {
-      this.setState({rate: e.target.value}, () => console.log(this.state.rate))
+      let rate;
+      rate = parseInt(e.target.rate)
+      this.setState({rate: rate})
+      if (rate > 100 || rate < 0.1) {
+        this.setState({amountFormError: true})
+      }
     } else if (e.target.name === 'year') {
       let term;
       term = e.target.value * 12
@@ -26,6 +40,9 @@ class App extends Component {
     } else if (e.target.name === 'months') {
       this.setState({term: e.target.value}, () => console.log(this.state.term))
     }
+  }
+
+  toggleAmountFormError() {
 
   }
 
@@ -53,6 +70,12 @@ class App extends Component {
                       type='number'
                       onChange={(e, target) => this.onFormChange(e, target)}
                      />
+                     {this.state.amountFormError === true ?
+                     <Message
+                        error
+                        header='Action Forbidden'
+                        content='You can only sign up for an account once with a given e-mail address.'
+                     /> : null}
                      <Form.Input
                        name='rate'
                        label='Interest rate per year'
