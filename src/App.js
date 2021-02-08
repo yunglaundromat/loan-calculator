@@ -98,8 +98,8 @@ class App extends Component {
 
     return(
       <Container style={{ marginTop: '6em' }}>
+        <Image src='/figloanslogo.png' centered size="medium"/>
         <Header as='h1' icon inverted textAlign='center'>
-         <Image src='/figtechlogo.png' centered size="massive"/>
         </Header>
         <Grid textAlign='center' verticalAlign='middle'>
           <Grid.Column style={{ maxWidth: 700 }}>
