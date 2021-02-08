@@ -18,9 +18,9 @@ class App extends Component {
     amount: 0,
     term: 0,
     rаte: 0,
-    principal: 0,
-    interest: 0,
-    monthlyPayments: 0,
+    principal: '',
+    interest: '',
+    monthlyPayments: '',
     amountFormError: false,
     rateFormError: false,
     termFormError: false,
@@ -213,7 +213,6 @@ class App extends Component {
                </Grid.Column>
                <Grid.Column stretched verticalAlign='middle'>
                  <Statistic.Group horizontal inverted>
-
                   <Transition visible={this.state.visible} animation='scale' duration={1500}>
                      <Statistic>
                       <Statistic.Value>${this.state.principal}</Statistic.Value>
