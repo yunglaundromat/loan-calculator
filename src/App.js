@@ -7,6 +7,7 @@ import { Button,
          Segment,
          Container,
          Statistic,
+         Transition,
          Message,
          Divider } from 'semantic-ui-react'
 import './App.css';
@@ -25,6 +26,7 @@ class App extends Component {
     termFormError: false,
     termYearFormDisabled: false,
     termMonthFormDisabled: false,
+    visible: false
   }
 
   onFormChange = (e, value) => {
@@ -55,7 +57,7 @@ class App extends Component {
       let term;
       term = parseInt(e.target.value) * 12
       this.setState({term: term})
-      if (term >= 1 && term <= 40) {
+      if (term >= 1 && term <= 480) {
         this.setState({termFormError: false})
       } else {
         this.setState({termFormError: true})
@@ -82,15 +84,12 @@ class App extends Component {
       let p = this.state.amount
       let r = (this.state.rate / 100) / 12
       let n = this.state.term
-      let totalInterest;
-      let totalInterestRounded;
-      let monthlyPayments;
-      let monthlyPaymentsRounded;
-      monthlyPayments = p * (r * ((1 + r)**n))/(((1 + r)**n) - 1)
-      monthlyPaymentsRounded = monthlyPayments.toFixed(2)
-      totalInterest = (monthlyPayments * n) - p
-      totalInterestRounded = totalInterest.toFixed(2)
-      this.setState({principal: p, interest: totalInterestRounded, monthlyPayments: monthlyPaymentsRounded})
+      let monthlyPayments = p * (r * ((1 + r)**n))/(((1 + r)**n) - 1)
+      let monthlyPaymentsRounded = (monthlyPayments.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      let totalInterest = (monthlyPayments * n) - p
+      let totalInterestRounded = (totalInterest.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      let principalCommafied = p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      this.setState({principal: principalCommafied, interest: totalInterestRounded, monthlyPayments: monthlyPaymentsRounded, visible: true})
     }
   }
 
@@ -214,20 +213,27 @@ class App extends Component {
                </Grid.Column>
                <Grid.Column stretched verticalAlign='middle'>
                  <Statistic.Group horizontal inverted>
+
+                  <Transition visible={this.state.visible} animation='scale' duration={1500}>
+                     <Statistic>
+                      <Statistic.Value>${this.state.principal}</Statistic.Value>
+                      <Statistic.Label>Principal Paid</Statistic.Label>
+                     </Statistic>
+                  </Transition>
+                  <Transition visible={this.state.visible} animation='scale' duration={3000}>
                    <Statistic>
-                     <Statistic.Value>${this.state.principal}</Statistic.Value>
-                     <Statistic.Label>Principal Paid</Statistic.Label>
+                    <Statistic.Value>${this.state.interest}</Statistic.Value>
+                    <Statistic.Label>Interest Paid</Statistic.Label>
                    </Statistic>
-                   <Statistic>
-                     <Statistic.Value>${this.state.interest}</Statistic.Value>
-                     <Statistic.Label>Interest Paid</Statistic.Label>
-                   </Statistic>
+                  </Transition>
                   </Statistic.Group>
                   <Divider inverted/>
-                  <Statistic inverted>
-                    <Statistic.Value>${this.state.monthlyPayments}</Statistic.Value>
-                    <Statistic.Label>Per Month</Statistic.Label>
-                  </Statistic>
+                  <Transition visible={this.state.visible} animation='scale' duration={5000}>
+                     <Statistic inverted>
+                      <Statistic.Value>${this.state.monthlyPayments}</Statistic.Value>
+                      <Statistic.Label>Monthly Payments</Statistic.Label>
+                     </Statistic>
+                  </Transition>
                </Grid.Column>
              </Grid>
              <Divider hidden />
