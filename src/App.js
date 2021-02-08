@@ -24,7 +24,7 @@ class App extends Component {
     rateFormError: false,
     termFormError: false,
     termYearFormDisabled: false,
-    termMonthFormDisabled: false
+    termMonthFormDisabled: false,
   }
 
   onFormChange = (e, value) => {
@@ -230,6 +230,7 @@ class App extends Component {
                   </Statistic>
                </Grid.Column>
              </Grid>
+             <Divider hidden />
            </Segment>
           </Grid.Column>
         </Grid>
