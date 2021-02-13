@@ -262,18 +262,7 @@ class App extends Component {
                </Grid.Column>
              </Grid>
              <Divider hidden />
-             <Accordion inverted>
-              <Accordion.Title
-                active={this.state.activeAccordion}
-                onClick={this.handleAccordionClick}
-              >
-                <Icon name='dropdown' />
-                View Amortization Schedule
-              </Accordion.Title>
-              <Accordion.Content active={this.state.activeAccordion}>
-
-              </Accordion.Content>
-            </Accordion>
+             
            </Segment>
           </Grid.Column>
         </Grid>
