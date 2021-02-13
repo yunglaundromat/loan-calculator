@@ -20,9 +20,10 @@ class App extends Component {
     amount: 0,
     term: 0,
     rаte: 0,
-    principal: '',
-    interest: '',
-    monthlyPayments: '',
+    principal: 0,
+    interest: 0,
+    monthlyPayments: 0,
+    amortization: {},
     amountFormError: false,
     rateFormError: false,
     termFormError: false,
@@ -91,11 +92,23 @@ class App extends Component {
       let totalInterest = (monthlyPayments * n) - p
       let totalInterestRounded = (totalInterest.toFixed(2))
       this.setState({principal: p, interest: totalInterestRounded, monthlyPayments: monthlyPaymentsRounded})
+      this.createAmortizationSchedule(p, r, n)
     }
   }
 
   handleAccordionClick = () => {
-    this.setState({activeAccordion: true})
+    if (this.state.activeAccordion === false) {
+      this.setState({activeAccordion: true})
+    } else {
+      this.setState({activeAccordion: false})
+    }
+  }
+
+  createAmortizationSchedule = (amount, rate, term) => {
+    let i;
+    let amortization = {}
+    for (i = 0; i < 5; i++) {
+    }
   }
 
   render() {
@@ -217,7 +230,7 @@ class App extends Component {
                  </Form>
                </Grid.Column>
                <Grid.Column stretched verticalAlign='middle'>
-                 <Statistic.Group horizontal inverted>
+                 <Statistic.Group horizontal inverted size="small">
                    <Statistic>
                      <Statistic.Value>
                        <CountUp
@@ -262,7 +275,7 @@ class App extends Component {
                </Grid.Column>
              </Grid>
              <Divider hidden />
-             
+
            </Segment>
           </Grid.Column>
         </Grid>
