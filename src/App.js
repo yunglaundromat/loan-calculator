@@ -75,7 +75,7 @@ class App extends Component {
       let term;
       term = parseInt(e.target.value)
       this.setState({term: term})
-      if (term >= 1 && term <= 40) {
+      if (term >= 1 && term <= 480) {
         this.setState({termFormError: false})
       } else {
         this.setState({termFormError: true})
