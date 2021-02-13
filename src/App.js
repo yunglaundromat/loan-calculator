@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import CountUp from 'react-countup';
 import { Button,
          Form,
          Grid,
@@ -7,8 +8,9 @@ import { Button,
          Segment,
          Container,
          Statistic,
-         Transition,
          Message,
+         Accordion,
+         Icon,
          Divider } from 'semantic-ui-react'
 import './App.css';
 
@@ -26,7 +28,7 @@ class App extends Component {
     termFormError: false,
     termYearFormDisabled: false,
     termMonthFormDisabled: false,
-    visible: false
+    activeAccordion: false
   }
 
   onFormChange = (e, value) => {
@@ -85,12 +87,15 @@ class App extends Component {
       let r = (this.state.rate / 100) / 12
       let n = this.state.term
       let monthlyPayments = p * (r * ((1 + r)**n))/(((1 + r)**n) - 1)
-      let monthlyPaymentsRounded = (monthlyPayments.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      let monthlyPaymentsRounded = (monthlyPayments.toFixed(2))
       let totalInterest = (monthlyPayments * n) - p
-      let totalInterestRounded = (totalInterest.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      let principalCommafied = p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      this.setState({principal: principalCommafied, interest: totalInterestRounded, monthlyPayments: monthlyPaymentsRounded, visible: true})
+      let totalInterestRounded = (totalInterest.toFixed(2))
+      this.setState({principal: p, interest: totalInterestRounded, monthlyPayments: monthlyPaymentsRounded})
     }
+  }
+
+  handleAccordionClick = () => {
+    this.setState({activeAccordion: true})
   }
 
   render() {
@@ -213,29 +218,62 @@ class App extends Component {
                </Grid.Column>
                <Grid.Column stretched verticalAlign='middle'>
                  <Statistic.Group horizontal inverted>
-                  <Transition visible={this.state.visible} animation='scale' duration={1500}>
-                     <Statistic>
-                      <Statistic.Value>${this.state.principal}</Statistic.Value>
-                      <Statistic.Label>Principal Paid</Statistic.Label>
-                     </Statistic>
-                  </Transition>
-                  <Transition visible={this.state.visible} animation='scale' duration={3000}>
                    <Statistic>
-                    <Statistic.Value>${this.state.interest}</Statistic.Value>
+                     <Statistic.Value>
+                       <CountUp
+                        start={0}
+                        end={this.state.principal}
+                        separator=","
+                        decimal="."
+                        decimals={2}
+                        prefix="$">
+                       </CountUp>
+                     </Statistic.Value>
+                   <Statistic.Label>Principal Paid</Statistic.Label>
+                  </Statistic>
+                  <Statistic>
+                    <Statistic.Value>
+                       <CountUp
+                        start={0}
+                        end={this.state.interest}
+                        separator=","
+                        decimal="."
+                        decimals={2}
+                        prefix="$">
+                       </CountUp>
+                    </Statistic.Value>
                     <Statistic.Label>Interest Paid</Statistic.Label>
-                   </Statistic>
-                  </Transition>
+                  </Statistic>
                   </Statistic.Group>
                   <Divider inverted/>
-                  <Transition visible={this.state.visible} animation='scale' duration={5000}>
-                     <Statistic inverted>
-                      <Statistic.Value>${this.state.monthlyPayments}</Statistic.Value>
-                      <Statistic.Label>Monthly Payments</Statistic.Label>
-                     </Statistic>
-                  </Transition>
+                    <Statistic inverted>
+                      <Statistic.Value>
+                         <CountUp
+                          start={0}
+                          end={this.state.monthlyPayments}
+                          separator=","
+                          decimal="."
+                          decimals={2}
+                          prefix="$">
+                         </CountUp>
+                      </Statistic.Value>
+                      <Statistic.Label>Interest Paid</Statistic.Label>
+                    </Statistic>
                </Grid.Column>
              </Grid>
              <Divider hidden />
+             <Accordion inverted>
+              <Accordion.Title
+                active={this.state.activeAccordion}
+                onClick={this.handleAccordionClick}
+              >
+                <Icon name='dropdown' />
+                View Amortization Schedule
+              </Accordion.Title>
+              <Accordion.Content active={this.state.activeAccordion}>
+
+              </Accordion.Content>
+            </Accordion>
            </Segment>
           </Grid.Column>
         </Grid>
