@@ -23,6 +23,7 @@ class App extends Component {
     principal: 0,
     interest: 0,
     monthlyPayments: 0,
+    remainingBalance:0,
     amortization: {},
     amountFormError: false,
     rateFormError: false,
@@ -91,8 +92,8 @@ class App extends Component {
       let monthlyPaymentsRounded = (monthlyPayments.toFixed(2))
       let totalInterest = (monthlyPayments * n) - p
       let totalInterestRounded = (totalInterest.toFixed(2))
-      this.setState({principal: p, interest: totalInterestRounded, monthlyPayments: monthlyPaymentsRounded})
-      this.createAmortizationSchedule(p, r, n)
+      this.setState({principal: p, interest: totalInterestRounded, monthlyPayments: monthlyPaymentsRounded, remainingBalance: p})
+      this.createAmortizationSchedule(p, r, n, monthlyPayments)
     }
   }
 
@@ -104,10 +105,16 @@ class App extends Component {
     }
   }
 
-  createAmortizationSchedule = (amount, rate, term) => {
+  createAmortizationSchedule = (amount, rate, term, payments) => {
     let i;
-    let amortization = {}
-    for (i = 0; i < 5; i++) {
+    let amortization = {date: [], principal:[], interest: [], total:[], balance: []}
+    for (i = 0; i < term; i++) {
+      let monthlyInterest = (rate * this.state.remainingBalance)
+      let monthlyPrincipal = (payments - monthlyInterest)
+      let newBalance = this.state.remainingBalance - monthlyPrincipal
+      this.setState({remainingBalance: newBalance})
+      console.log(rate, monthlyInterest, monthlyPrincipal, payments)
+
     }
   }
 
@@ -270,12 +277,12 @@ class App extends Component {
                           prefix="$">
                          </CountUp>
                       </Statistic.Value>
-                      <Statistic.Label>Interest Paid</Statistic.Label>
+                      <Statistic.Label>Monthly Payments</Statistic.Label>
                     </Statistic>
                </Grid.Column>
              </Grid>
              <Divider hidden />
-
+             
            </Segment>
           </Grid.Column>
         </Grid>
