@@ -17,14 +17,14 @@ import './App.css';
 class App extends Component {
 
   state = {
+    date: new Date(),
     amount: 0,
     term: 0,
     rаte: 0,
     principal: 0,
     interest: 0,
     monthlyPayments: 0,
-    remainingBalance:0,
-    amortization: {},
+    amortization: {date: [], principal:[], interest: [], total:[], remainingBalance: []},
     amountFormError: false,
     rateFormError: false,
     termFormError: false,
@@ -92,8 +92,8 @@ class App extends Component {
       let monthlyPaymentsRounded = (monthlyPayments.toFixed(2))
       let totalInterest = (monthlyPayments * n) - p
       let totalInterestRounded = (totalInterest.toFixed(2))
-      this.setState({principal: p, interest: totalInterestRounded, monthlyPayments: monthlyPaymentsRounded, remainingBalance: p})
-      this.createAmortizationSchedule(p, r, n, monthlyPayments)
+      this.setState({principal: p, interest: totalInterestRounded, monthlyPayments: monthlyPaymentsRounded})
+      this.createAmortizationSchedule(r, n, monthlyPayments)
     }
   }
 
@@ -105,17 +105,27 @@ class App extends Component {
     }
   }
 
-  createAmortizationSchedule = (amount, rate, term, payments) => {
+  createAmortizationSchedule = (rate, term, payments) => {
     let i;
-    let amortization = {date: [], principal:[], interest: [], total:[], balance: []}
+    let date = this.state.date
+    let currentRemainingBalance = this.state.amount;
+    let totalInterest = 0;
+    let amortization = {date: [], principal:[], interest: [], total:[], remainingBalance: []}
     for (i = 0; i < term; i++) {
-      let monthlyInterest = (rate * this.state.remainingBalance)
+      let monthlyInterest = (rate * currentRemainingBalance)
       let monthlyPrincipal = (payments - monthlyInterest)
-      let newBalance = this.state.remainingBalance - monthlyPrincipal
-      this.setState({remainingBalance: newBalance})
-      console.log(rate, monthlyInterest, monthlyPrincipal, payments)
-
+      let newBalance = Math.abs(currentRemainingBalance - monthlyPrincipal)
+      totalInterest += monthlyInterest
+      date = new Date(date.setMonth(date.getMonth()+1));
+      let dateFormatted = date.toLocaleDateString()
+      amortization.date.push(dateFormatted)
+      amortization.principal.push(monthlyPrincipal.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+      amortization.interest.push(monthlyInterest.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+      amortization.total.push(totalInterest.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+      amortization.remainingBalance.push(newBalance.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+      currentRemainingBalance = newBalance
     }
+    this.setState({amortization: amortization})
   }
 
   render() {
@@ -282,7 +292,71 @@ class App extends Component {
                </Grid.Column>
              </Grid>
              <Divider hidden />
-             
+             <Accordion inverted>
+              <Accordion.Title
+                active={this.state.activeAccordion}
+                onClick={this.handleAccordionClick}
+              >
+                <Icon name='dropdown' />
+                View Amortization Schedule
+              </Accordion.Title>
+              <Accordion.Content active={this.state.activeAccordion}>
+              <Grid columns='equal' divided inverted padded>
+                <Grid.Row color='black' textAlign='center'>
+                  <Grid.Column>
+                    <Segment color='black' inverted>
+                      Date
+                    </Segment>
+                    {this.state.amortization.date.map((value, i) => {
+                       return (<Segment color='black' inverted key={i}>
+                                 {value}
+                               </Segment>)
+                    })}
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Segment color='black' inverted>
+                      Principal
+                    </Segment>
+                    {this.state.amortization.principal.map((value, i) => {
+                       return (<Segment color='black' inverted key={i}>
+                                 ${value}
+                               </Segment>)
+                    })}
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Segment color='black' inverted>
+                      Interest
+                    </Segment>
+                    {this.state.amortization.interest.map((value, i) => {
+                       return (<Segment color='black' inverted key={i}>
+                                 ${value}
+                               </Segment>)
+                    })}
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Segment color='black' inverted>
+                      Total Int.
+                    </Segment>
+                    {this.state.amortization.total.map((value, i) => {
+                       return (<Segment color='black' inverted key={i}>
+                                 ${value}
+                               </Segment>)
+                    })}
+                  </Grid.Column>
+                  <Grid.Column>
+                    <Segment color='black' inverted>
+                      Balance
+                    </Segment>
+                    {this.state.amortization.remainingBalance.map((value, i) => {
+                       return (<Segment color='black' inverted key={i}>
+                                 ${value}
+                               </Segment>)
+                    })}
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+              </Accordion.Content>
+            </Accordion>
            </Segment>
           </Grid.Column>
         </Grid>
