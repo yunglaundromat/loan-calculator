@@ -17,7 +17,6 @@ import './App.css';
 class App extends Component {
 
   state = {
-    date: new Date(),
     amount: 0,
     term: 0,
     rаte: 0,
@@ -107,7 +106,7 @@ class App extends Component {
 
   createAmortizationSchedule = (rate, term, payments) => {
     let i;
-    let date = this.state.date
+    let date = new Date()
     let currentRemainingBalance = this.state.amount;
     let totalInterest = 0;
     let amortization = {date: [], principal:[], interest: [], total:[], remainingBalance: []}
